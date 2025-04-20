@@ -23,6 +23,7 @@
               seat-id: '10_0'            # 替换成你的 Seat ID (字符串形式)
               # --- 配置 Slack 通知 ---
               # 引用我们之前在 GitHub Secrets 中存储的 Webhook URL
+              slack-incoming-webhook-url: ''
               #slack-incoming-webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
               # 自定义 Slack 消息内容，可以 @ 你的 Slack 用户名
               #message: '<@你的Slack用户名> 发现余票！快去看看！'
