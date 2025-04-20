@@ -1,0 +1,45 @@
+    name: Melon Ticket Check # 工作流名称，可以自定义
+
+    on:
+      schedule:
+        # 设置运行频率，这里是每 5 分钟运行一次
+        # 你可以根据需要调整 cron 表达式，但注意不要过于频繁以免超出 GitHub Actions 的免费额度
+        - cron: '*/5 * * * *'
+      # 你也可以添加 workflow_dispatch 来允许手动触发
+      workflow_dispatch:
+
+    jobs:
+      check_melon_ticket:
+        runs-on: ubuntu-latest # 指定运行环境
+        timeout-minutes: 5    # 设置任务超时时间
+        steps:
+          - name: Check Tickets # 步骤名称
+            # 引用 melon-ticket-actions 项目，确保使用最新的稳定版本号（可以去原项目查看）
+            uses: mooyoul/melon-ticket-actions@v1.1.5 # <--- 检查并使用最新的版本号
+            with:
+              # --- 把下面这些 ID 换成你找到的实际 ID ---
+              product-id: '210779'      # 替换成你的 Product ID (字符串形式)
+              schedule-id: '100003'     # 替换成你的 Schedule ID (字符串形式)
+              seat-id: '10_0'            # 替换成你的 Seat ID (字符串形式)
+              # --- 配置 Slack 通知 ---
+              # 引用我们之前在 GitHub Secrets 中存储的 Webhook URL
+              #slack-incoming-webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
+              # 自定义 Slack 消息内容，可以 @ 你的 Slack 用户名
+              #message: '<@你的Slack用户名> 发现余票！快去看看！'
+              # 可选：如果只想在找到票时才收到 Slack 通知，设为 true
+              # notify-only-on-available: true
+          - name: Send WeChat Notification via ServerChan
+            # 使用 if: always() 可以确保即使上一步失败也运行通知（用于调试或告知失败）
+            # 使用 if: success() 意味着只有上一步成功才运行通知（更常用）
+            # 使用 if: steps.check.outputs.available == 'true' （如果原action支持输出状态的话，这是最理想的，但它似乎不支持）
+            if: success() # 仅在 Check Tickets 步骤成功时运行
+            uses: easychen/github-action-server-chan@v1.3 # 使用 Server酱的 Action
+            with:
+              sendkey: ${{ secrets.SERVERCHAN_SENDKEY }} # 引用你存储的 SendKey
+              title: 'Melon Ticket 提醒' # 推送的标题
+              body: | # 推送的正文内容
+                Melon Ticket 检查任务刚刚运行完毕。
+                演出 Product ID: 210779
+                场次 Schedule ID: 100003
+                请留意是否有票！
+                (注意：此消息表示检查已执行，不保证一定有票)
