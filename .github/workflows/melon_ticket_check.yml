@@ -33,7 +33,7 @@
             # 使用 if: success() 意味着只有上一步成功才运行通知（更常用）
             # 使用 if: steps.check.outputs.available == 'true' （如果原action支持输出状态的话，这是最理想的，但它似乎不支持）
             if: success() # 仅在 Check Tickets 步骤成功时运行
-            uses: easychen/github-action-server-chan@v1.3 # 使用 Server酱的 Action
+            uses: easychen/github-action-serverchan@v1.3 # 使用 Server酱的 Action
             with:
               sendkey: ${{ secrets.SERVERCHAN_SENDKEY }} # 引用你存储的 SendKey
               title: 'Melon Ticket 提醒' # 推送的标题
