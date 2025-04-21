@@ -15,7 +15,7 @@
         steps:
           - name: Check Tickets # 步骤名称
             # 引用 melon-ticket-actions 项目，确保使用最新的稳定版本号（可以去原项目查看）
-            uses: mooyoul/melon-ticket-actions@v1.1.5 # <--- 检查并使用最新的版本号
+            uses: Echo0ff/melon-ticket-actions@master # <--- 检查并使用最新的版本号
             with:
               # --- 把下面这些 ID 换成你找到的实际 ID ---
               product-id: '210779'      # 替换成你的 Product ID (字符串形式)
