@@ -1,0 +1,35 @@
+name: Melon Ticket Check
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+jobs:
+  check_melon_ticket:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check Tickets
+        uses: Echo0ff/melon-ticket-actions@master
+        id: check
+        with:
+          product-id: '210779'
+          schedule-id: '100003'
+          seat-id: '10_0'
+          # --- 移除 slack-incoming-webhook-url ---
+          # slack-incoming-webhook-url: 'invalid-url' # <--- 确认这行已被删除或注释掉
+
+      - name: Send WeChat Notification via ServerChan
+        if: success()
+        uses: easychen/github-action-server-chan@v1.0.0
+        with:
+          sendkey: ${{ secrets.SERVERCHAN_SENDKEY }}
+          title: 'Melon Ticket 提醒'
+          # --- 将 body 修改为 desp ---
+          desp: |   # <--- 修改这里
+            Melon Ticket 检查任务刚刚运行完毕。  
+            演出 Product ID: 210779  
+            场次 Schedule ID: 100003  
+            请留意是否有票！  
+            (注意：此消息表示检查已执行，不保证一定有票)
